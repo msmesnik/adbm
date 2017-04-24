@@ -1,0 +1,36 @@
+{
+  "name": "adbm",
+  "version": "0.0.1",
+  "description": "Simple, pluggable async database migration tool for node.js >= 7.6.0",
+  "main": "index.js",
+  "engines": {
+    "node": ">=7.6.0"
+  },
+  "scripts": {
+    "docker:db": "docker start migro_dev_db || docker run --name migro_dev_db -p 27017:27017 -d mongo:3.4",
+    "preversion": "npm run lint && npm run test",
+    "lint": "standard \"src/**/*.js\"",
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daerion/adbm.git"
+  },
+  "keywords": [
+    "mongodb",
+    "mongo",
+    "migration"
+  ],
+  "author": "Michael Smesnik <ms@tailored-apps.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/daerion/adbm/issues"
+  },
+  "homepage": "https://github.com/daerion/adbm#readme",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "mongodb": "^2.2.26",
+    "standard": "^10.0.2"
+  }
+}
