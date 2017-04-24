@@ -8,6 +8,7 @@ const lib = require('../lib')
 
 describe('migrations', function () {
   let db
+  const noop = () => undefined
   const mockInfoCollection = '_mocha_mock_migrations'
   const getIds = (items) => items.map(({ id }) => id)
 
@@ -18,12 +19,20 @@ describe('migrations', function () {
   describe('general functionality', function () {
     it('requires a database driver object', async function () {
       expect(() => lib.adbm()).to.throw()
-      expect(() => lib.adbm(db)).to.not.throw()
+      expect(() => lib.adbm({ db, adapter })).to.not.throw()
+    })
+
+    it('validates an adapter object', function () {
+      expect(() => lib.validateAdapter({ })).to.throw()
+      expect(() => lib.validateAdapter({ init: noop })).to.throw()
+      expect(() => lib.validateAdapter({ init: noop, getCompletedMigrationIds: noop })).to.throw()
+      expect(() => lib.validateAdapter({ init: noop, getCompletedMigrationIds: noop, registerMigration: noop })).to.throw()
+      expect(() => lib.validateAdapter({ init: noop, getCompletedMigrationIds: noop, registerMigration: noop, unregisterMigration: noop })).to.not.throw()
     })
 
     it('requires migration objects to have "up" and "down" functions', function () {
-      const up = () => undefined
-      const down = () => undefined
+      const up = noop
+      const down = noop
 
       expect(lib.isValidMigrationObject()).to.equal(false)
       expect(lib.isValidMigrationObject(1)).to.equal(false)
@@ -61,7 +70,6 @@ describe('migrations', function () {
     })
 
     it('runs a list of migrations in order', async function () {
-      const noop = () => undefined
       let num = 0
       let first
       let second
