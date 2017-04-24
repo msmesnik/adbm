@@ -7,7 +7,7 @@
     "node": ">=7.6.0"
   },
   "scripts": {
-    "docker:db": "docker start migro_dev_db || docker run --name migro_dev_db -p 27017:27017 -d mongo:3.4",
+    "docker:db": "docker start adbm_dev_db || docker run --name adbm_dev_db -p 27017:27017 -d mongo:3.4",
     "preversion": "npm run lint && npm run test",
     "lint": "standard \"src/**/*.js\"",
     "test": "mocha"
@@ -27,10 +27,16 @@
     "url": "https://github.com/daerion/adbm/issues"
   },
   "homepage": "https://github.com/daerion/adbm#readme",
+  "peerDependencies": {
+    "mongodb": "^2.2.26"
+  },
   "devDependencies": {
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "mongodb": "^2.2.26",
     "standard": "^10.0.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0"
   }
 }
