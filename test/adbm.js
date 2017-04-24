@@ -16,7 +16,7 @@ describe('migrations', function () {
   })
 
   describe('general functionality', function () {
-    it('requires a mongodb driver object', async function () {
+    it('requires a database driver object', async function () {
       expect(() => lib.adbm()).to.throw()
       expect(() => lib.adbm(db)).to.not.throw()
     })
