@@ -9,7 +9,7 @@
   "scripts": {
     "docker:db": "docker start adbm_dev_db || docker run --name adbm_dev_db -p 27017:27017 -d mongo:3.4",
     "preversion": "npm run lint && npm run test",
-    "lint": "standard \"src/**/*.js\"",
+    "lint": "standard",
     "test": "mocha"
   },
   "repository": {
@@ -27,10 +27,8 @@
     "url": "https://github.com/daerion/adbm/issues"
   },
   "homepage": "https://github.com/daerion/adbm#readme",
-  "peerDependencies": {
-    "mongodb": "^2.2.26"
-  },
   "devDependencies": {
+    "adbm-mongodb": "^1.0.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "mongodb": "^2.2.26",
