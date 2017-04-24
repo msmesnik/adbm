@@ -8,23 +8,23 @@ const lib = require('../lib')
 describe('migrations', function () {
   let db
   const mockInfoCollection = '_mocha_mock_migrations'
+  const getIds = (items) => items.map(({ id }) => id)
+  const cleanup = async () => {
+    await db.collection(mockInfoCollection).drop()
+  }
 
   before(async () => {
     db = await getConnection()
   })
 
   describe('general functionality', function () {
-    const getIds = (items) => items.map(({ id }) => id)
-
     before(async () => {
       await db.collection(mockInfoCollection).insertMany([
         { id: 'first', completed: new Date() },
         { id: 'second', completed: new Date() }
       ])
     })
-    after(async () => {
-      await db.collection(mockInfoCollection).drop()
-    })
+    after(cleanup)
 
     it('requires a mongodb driver object', async function () {
       expect(() => lib.adbm()).to.throw()
@@ -54,7 +54,7 @@ describe('migrations', function () {
 
     it('reads migration files fron a directory', async function () {
       // excludes id "02-invalid" and makes id "04-ok" fail verificytion
-      const migrations = await lib.getMigrationObjects('test/mock', [ '02-invalid' ], ({ failVerify }) => !(failVerify === true))
+      const migrations = await lib.getMigrationObjects({ directory: 'test/mock', exclude: [ '02-invalid' ], verify: ({ failVerify }) => !(failVerify === true) })
 
       expect(migrations).to.be.an('array')
 
@@ -67,19 +67,31 @@ describe('migrations', function () {
       const mockId = 'mock'
       expect(getIds(await db.collection(mockInfoCollection).find().toArray())).to.not.contain(mockId)
 
-      await lib.registerMigration(mockId, db, mockInfoCollection)
+      await lib.registerMigration({ id: mockId, collection: mockInfoCollection, db })
       expect(getIds(await db.collection(mockInfoCollection).find().toArray())).to.contain(mockId)
     })
 
     it('removes an entry from the list of performed migrations', async function () {
       expect(getIds(await db.collection(mockInfoCollection).find().toArray())).to.contain('first')
 
-      await lib.unregisterMigration('first', db, mockInfoCollection)
+      await lib.unregisterMigration({ id: 'first', collection: mockInfoCollection, db })
       expect(getIds(await db.collection(mockInfoCollection).find().toArray())).to.not.contain('first')
     })
   })
 
   describe('running migrations', function () {
+    const collection = '_mocha_temp'
+    let migrate
+    // const migrate = lib.adbm(db, { collection: mockInfoCollection, directory: 'test/mock' })
+
+    before(() => {
+      migrate = lib.adbm(db, { collection: mockInfoCollection, directory: 'test/mock' })
+    })
+    after(async () => {
+      await cleanup()
+      await db.collection(collection).drop()
+    })
+
     it('runs a list of migrations in order', async function () {
       const noop = () => undefined
       let num = 0
@@ -108,13 +120,35 @@ describe('migrations', function () {
         }
       ]
 
-      const ops = await lib.performMigrations(migrations, 'up', db, mockInfoCollection, noop)
+      const ops = await lib.performMigrations({ migrations, direction: 'up', db, collection: mockInfoCollection, registerSuccess: noop })
 
       expect(ops).to.be.an('array')
       expect(ops.length).to.equal(2)
 
       expect(first).to.equal(1)
       expect(second).to.equal(2)
+    })
+
+    it('applies pending migrations', async function () {
+      await migrate('up', { exclude: [ '03-ok' ] })
+
+      const first = await db.collection(collection).find().toArray()
+      expect(first.length).to.equal(2)
+
+      await migrate()
+      const second = await db.collection(collection).find().toArray()
+      expect(second.length).to.equal(3)
+    })
+
+    it('reverts applied migrations', async function () {
+      await migrate('down', { exclude: [ '03-ok' ] })
+
+      const first = await db.collection(collection).find().toArray()
+      expect(first.length).to.equal(1)
+
+      await migrate('down')
+      const second = await db.collection(collection).find().toArray()
+      expect(second.length).to.equal(0)
     })
   })
 })
