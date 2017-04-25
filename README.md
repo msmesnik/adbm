@@ -58,7 +58,7 @@ module.exports = async function () {
 ## Migration Files
 All migration files must export an object that implements both an `up` and a `down` function. Migrations are identified by their filename (i.e. `01-init-db.js` will have `01-init-db` as it's migration id) and will be executed in the order retrieved from the filesystem.
 
-`up` and `down` methods can (and probably should) be `async` functions (they will be `await`ed) and will each recieve the following parameters when they're executed:
+`up` and `down` methods can (and probably should) be `async` functions (they will be `await`ed) and will each receive the following parameters when they're executed:
 
 * `db` Database driver instance (as originally passed to `adbm()`)
 * `logger` Logger instance (as originally passed to `adbm()`)
@@ -104,7 +104,7 @@ Adapters need to implement the following functions (all of which will propably n
   
 
 ## Error Handling
-Similar to it's spiritual predecessor library [reconsider](https://github.com/daerion/reconsider), adbm does not handle any migration errors. The reasoning behind this has remained the exact same: handling migration errors would either involve too much guesswork or introduce a host of new config options for no good reason (Revert everything? Don't revert anything? Attempt to call the failed migration's down method?). It is the caller's responsibility to handle errors appropriately.
+Similar to its spiritual predecessor library [reconsider](https://github.com/daerion/reconsider), adbm does not handle any migration errors. The reasoning behind this has remained the exact same: handling migration errors would either involve too much guesswork or introduce a host of new config options for no good reason (Revert everything? Don't revert anything? Attempt to call the failed migration's down method?). It is the caller's responsibility to handle errors appropriately.
 
 One consequence of adbm's lack of error handling is that an error in any migration will prevent all subsequent migrations from running. This, too, is intended behavior, since database migrations will more often than not rely on changes introduced by previous migrations. Since no automatic rollback is performed, and since all successful migrations will still register, `migrate()` can safely be called again once the problem has been resolved.
 
