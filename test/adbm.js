@@ -4,7 +4,7 @@ const { expect } = require('chai')
 const adapter = require('adbm-mongodb')
 
 const { getConnection } = require('./helpers')
-const lib = require('../lib')
+const lib = require('../lib/adbm')
 
 describe('migrations', function () {
   let db
