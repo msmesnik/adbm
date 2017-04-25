@@ -21,10 +21,11 @@ npm install --save adbm-mongodb
 `adbm({ db, adapter, metadata,  directory, logger }) -> Function`
 
 * `db` (*required*) Database driver instance (as returned by `await mongodb.connect()` for instance). This will be passed to all migration functions as well as all adapter functions. 
-* `adapter`(*required*) Adapter object (see Adapters section)
+* `adapter`(*required*) Adapter object (see Adapters section).
+* `dbName` (optional, default `undefined`) Database name. Will be passed to `adapter.init()` to enable the adapter to create the database itself if necessary.
 * `metadata` (optional, default `_adbm`) Name of the table or collection containing migration metadata (i.e. the list of already applied migrations). 
-* `directory` (optional, default `migrations`) Directory containing migration files (can be relative to cwd or absolute)
-* `logger` (optional, defaults to console logging) Logger object providing `debug`, `verbose`, `info`, `warn` and `error` functions (e.g. a [winston](https://github.com/winstonjs/winston) instance)
+* `directory` (optional, default `migrations`) Directory containing migration files (can be relative to cwd or absolute).
+* `logger` (optional, defaults to console logging) Logger object providing `debug`, `verbose`, `info`, `warn` and `error` functions (e.g. a [winston](https://github.com/winstonjs/winston) instance).
 
 This will return an async function which will run (or revert) available migrations. The returned function will have the following API:
 
@@ -89,13 +90,14 @@ Adapters are small objects that handle all database specific tasks. Two adapters
 Adapter functions will receive a subset of the following parameters (see below for details on which function receives what): 
 * `id` Migration ID
 * `db` Database driver instance
+* `dbName` Database name
 * `metadata` Name of metadata table or collection
 * `directory` Directory containing migration files (as passed to `adbm()`)
 * `logger` Logger object
 
 #### Functions
 Adapters need to implement the following functions (all of which will propably need to be async/Promise returning):
-* `init({ db, metadata, directory, logger }) -> void` Will be called before any migrations take place. Can/should be used to create the database and/or the migration metadata table if necessary.
+* `init({ db, dbName, metadata, directory, logger }) -> void` Will be called before any migrations take place. Can/should be used to create the database and/or the migration metadata table if necessary.
 * `getCompletedMigrationIds({ db, metadata, logger }) -> Array<String>` Expected to return an array of already applied migration IDs.
 * `registerMigration({ id, db, metadata, logger }) -> void` Called upon successful completion of a migration. Should be used to store migration ID in the `metadata` table so it will be included when `getCompletedMigrationIds` is called the next time.
 * `unregisterMigration({ id, db, metadata, logger }) -> void` Called when a migration has been reverted. Should be used to remove the migration ID from the list of completed migrations.
