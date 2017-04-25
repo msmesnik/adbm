@@ -1,6 +1,6 @@
 const mongodb = require('mongodb')
 
-const dbUri = process.env.DB_URI || 'mongodb://localhost/migro'
+const dbUri = process.env.DB_URI || 'mongodb://localhost/adbm'
 
 let db
 
