@@ -17,9 +17,11 @@
     "url": "git+https://github.com/daerion/adbm.git"
   },
   "keywords": [
-    "mongodb",
+    "database",
     "mongo",
-    "migration"
+    "mongodb",
+    "migration",
+    "rethinkdb"
   ],
   "author": "Michael Smesnik <ms@tailored-apps.com>",
   "license": "MIT",
