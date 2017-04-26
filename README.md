@@ -83,7 +83,7 @@ module.exports = {
 ```
 
 ## Adapters
-Adapters are small objects that handle all database specific tasks. Two adapters are currently available on npm: `adbm-mongodb` and `adbm-rethinkdb`. To write your own adapter for any other dbms you'll simply need to implement the adapter API and provide your adapter object to the `adbm()` initialization function.
+Adapters are small objects that handle all database specific tasks. Two adapters are currently available on npm: [adbm-mongodb](https://github.com/daerion/adbm-mongodb) and [adbm-rethinkdb](https://github.com/daerion/adbm-rethinkdb). To write your own adapter for any other dbms you'll simply need to implement the adapter API and provide your adapter object to the `adbm()` initialization function.
  
 ### API
 #### Parameters
@@ -111,7 +111,7 @@ One consequence of adbm's lack of error handling is that an error in any migrati
 This should also encourage the user to write small migrations that change one thing at a time, as opposed to huge migration files that change several things at once.
 
 ## Testing
-The usual:
+Tests use the `adbm-mongodb` mongodb adapter and must therefore be able to connect to a mongodb database. You can either provide a full mongodb URI via the `DB_URI` environment variable or use the `docker:db` npm script to spin up a docker container called `adbm_dev_db` which will provide a mongodb 3.4 server. Afterwards simply run:
 ```
 npm run test
 ```
