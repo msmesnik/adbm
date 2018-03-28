@@ -34,6 +34,7 @@
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "mongodb": "^2.2.26",
+    "sinon": "^4.4.10",
     "standard": "^10.0.2"
   },
   "dependencies": {
