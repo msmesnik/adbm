@@ -10,7 +10,7 @@
     "docker:db": "docker start adbm_dev_db || docker run --name adbm_dev_db -p 27017:27017 -d mongo:3.4",
     "preversion": "npm run lint && npm run test",
     "lint": "standard",
-    "test": "mocha"
+    "test": "mocha --exit"
   },
   "repository": {
     "type": "git",
