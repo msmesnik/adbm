@@ -2,6 +2,7 @@
 
 const { expect } = require('chai')
 const adapter = require('adbm-mongodb')
+const sinon = require('sinon')
 
 const { getConnection } = require('./helpers')
 const lib = require('../lib/adbm')
@@ -69,40 +70,52 @@ describe('migrations', function () {
       await db.collection(collection).drop()
     })
 
-    it('runs a list of migrations in order', async function () {
-      let num = 0
-      let first
-      let second
+    it('runs migrations in order when migrating up', async function () {
+      const first = sinon.spy()
+      const second = sinon.spy()
+      const down = sinon.spy()
 
       const migrations = [
         {
           id: 'one',
-          up: () => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                first = ++num
-                resolve()
-              }, 250)
-            })
-          },
-          down: noop
+          up: first,
+          down
         },
         {
           id: 'two',
-          up: () => {
-            second = ++num
-          },
-          down: noop
+          up: second,
+          down
         }
       ]
 
-      const ops = await lib.performMigrations({ db, migrations, direction: 'up', metadata: mockInfoCollection, registerSuccess: noop })
+      await lib.performMigrations({ db, migrations, direction: 'up', metadata: mockInfoCollection, registerSuccess: noop })
 
-      expect(ops).to.be.an('array')
-      expect(ops.length).to.equal(2)
+      sinon.assert.callCount(down, 0)
+      sinon.assert.callOrder(first, second)
+    })
 
-      expect(first).to.equal(1)
-      expect(second).to.equal(2)
+    it('runs migrations in reverse order when migrating down', async function () {
+      const up = sinon.spy()
+      const first = sinon.spy()
+      const second = sinon.spy()
+
+      const migrations = [
+        {
+          id: 'one',
+          up,
+          down: first
+        },
+        {
+          id: 'two',
+          up,
+          down: second
+        }
+      ]
+
+      await lib.performMigrations({ db, migrations, direction: 'down', metadata: mockInfoCollection, registerSuccess: noop })
+
+      sinon.assert.callCount(up, 0)
+      sinon.assert.callOrder(second, first)
     })
 
     it('applies pending migrations', async function () {
