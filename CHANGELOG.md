@@ -1,5 +1,9 @@
 # Changelog
 
+## 2019-08-15 `v1.2.0`
+* `[SEMVER_MINOR]` replaced all calls to `logger.verbose` with `logger.debug`
+* `[SEMVER_PATCH]` updated dependencies
+
 ## 2018-03-28 `v1.1.2`
 * `[SEMVER_PATCH]` migrations will now be run in reverse order when migrating down (as was always the intention)
 
