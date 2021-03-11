@@ -1,6 +1,4 @@
 # adbm
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-
 adbm is a simple tool for managing database migrations. It follows the UNIX philosophy of "do one thing and do it well" - therefore it does not include a CLI for creating migration files, nor does it currently sport any other bells and whistles.
 
 In a nutshell, adbm itself will include all `.js` files from a particular directory (`migrations/` by default), see if they export an object that contains both an `up` and a `down` function and then run one of these functions (depending on whether you're migrating `up` or `down` of course).   
