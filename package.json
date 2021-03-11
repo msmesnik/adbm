@@ -1,6 +1,6 @@
 {
   "name": "adbm",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Simple, pluggable async database migration tool for node.js >= 12.0.0",
   "main": "index.js",
   "engines": {
