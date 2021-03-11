@@ -30,7 +30,7 @@
     "preversion": "yarn run lint && yarn run test",
     "lint": "eslint \"src/**/*.ts\"",
     "test": "NODE_ENV=test jest",
-    "build": "rm -rf dist/* && tsc -b tsconfig.build.json && cp package.json .npmignore dist/",
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json && cp package.json .npmignore *.md LICENSE dist/",
     "pack:dist": "yarn run build; (cd dist; yarn pack --filename package.tgz)",
     "publish:dist": "yarn run pack:dist; yarn publish dist/package.tgz --ignore-scripts"
   },
