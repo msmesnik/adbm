@@ -1,0 +1,7 @@
+src/
+test/
+.git*
+.*rc
+.eslintrc*
+.mocharc*
+tsconfig*

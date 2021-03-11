@@ -1,16 +1,10 @@
 {
   "name": "adbm",
   "version": "1.2.1",
-  "description": "Simple, pluggable async database migration tool for node.js >= 7.6.0",
+  "description": "Simple, pluggable async database migration tool for node.js >= 12.0.0",
   "main": "index.js",
   "engines": {
-    "node": ">=7.6.0"
-  },
-  "scripts": {
-    "docker:db": "docker start adbm_dev_db || docker run --name adbm_dev_db -p 27017:27017 -d mongo:3.4",
-    "preversion": "npm run lint && npm run test",
-    "lint": "standard",
-    "test": "mocha --exit"
+    "node": ">=12.0.0"
   },
   "repository": {
     "type": "git",
@@ -20,25 +14,41 @@
     "database",
     "mongo",
     "mongodb",
-    "migration",
-    "rethinkdb"
+    "migration"
   ],
-  "author": "Michael Smesnik <ms@tailored-apps.com>",
+  "author":{
+    "name": "Michael Smesnik",
+    "email": "michael@crystallize.com"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/daerion/adbm/issues"
   },
   "homepage": "https://github.com/daerion/adbm#readme",
+  "scripts": {
+    "prepublishOnly": "echo \"Do not use publish script directly, use publish:dist script instead.\"; exit 1",
+    "preversion": "yarn run lint && yarn run test",
+    "lint": "eslint \"src/**/*.ts\"",
+    "test": "NODE_ENV=test jest",
+    "build": "rm -rf dist/* && tsc -b tsconfig.build.json && cp package.json .npmignore dist/",
+    "pack:dist": "yarn run build; (cd dist; yarn pack --filename package.tgz)",
+    "publish:dist": "yarn run pack:dist; yarn publish dist/package.tgz --ignore-scripts"
+  },
   "devDependencies": {
-    "adbm-mongodb": "^1.0.4",
-    "chai": "^4.2.0",
-    "mocha": "^6.2.0",
-    "mongodb": "^2.2.35",
-    "prettier-standard": "^8.0.1",
-    "sinon": "^7.4.1",
-    "standard": "^12.0.1"
+    "@tsconfig/node12": "^1.0.7",
+    "@types/jest": "^26.0.14",
+    "@typescript-eslint/eslint-plugin": "^4.2.0",
+    "@typescript-eslint/parser": "^4.2.0",
+    "eslint": "^7.9.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "jest": "^26.4.2",
+    "prettier": "^2.1.2",
+    "ts-jest": "^26.4.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   },
   "dependencies": {
-    "bluebird": "^3.5.5"
+    "tslib": "^2.1.0"
   }
 }
