@@ -23,7 +23,6 @@ yarn add adbm-mongodb
 * `injections` (optional):
   * `getMigrationObjects` (optional, default `getMigrationObjectsFromDirectory`) A function that returns an array of migration objects, i.e. objects that expose an `up` and a `down` function, as well as an `id`.
   * `metadata` (optional, default `_adbm`) Name of the table or collection containing migration metadata (i.e. the list of already applied migrations). 
-  * `directory` (optional, default `migrations`) Directory containing migration files (can be relative to cwd or absolute).
   * `logger` (optional, defaults to console logging) Logger object providing `debug`, `verbose`, `info`, `warn` and `error` functions (e.g. a [winston](https://github.com/winstonjs/winston) instance).
 
 This will return an async function which will run (or revert) available migrations. The returned function will have the following API:
@@ -96,16 +95,14 @@ Adapter functions will receive a subset of the following parameters (see below f
 * `id` Migration ID
 * `db` Database driver instance
 * `metadata` Name of metadata table or collection
-* `directory` Directory containing migration files (as passed to `adbm()`)
 * `logger` Logger object
 
 #### Functions
 Adapters need to implement the following functions (all of which will propably need to be async/Promise returning):
-* `init({ db, metadata, directory, logger }) -> void` Will be called before any migrations take place. Can/should be used to create the database and/or the migration metadata table if necessary.
+* `init({ db, metadata, logger }) -> void` Will be called before any migrations take place. Can/should be used to create the database and/or the migration metadata table if necessary.
 * `getCompletedMigrationIds({ db, metadata, logger }) -> Array<String>` Expected to return an array of already applied migration IDs.
 * `registerMigration({ id, db, metadata, logger }) -> void` Called upon successful completion of a migration. Should be used to store migration ID in the `metadata` table so it will be included when `getCompletedMigrationIds` is called the next time.
 * `unregisterMigration({ id, db, metadata, logger }) -> void` Called when a migration has been reverted. Should be used to remove the migration ID from the list of completed migrations.
-  
 
 ## Error Handling
 Similar to its spiritual predecessor library [reconsider](https://github.com/daerion/reconsider), adbm does not handle any migration errors. The reasoning behind this has remained the exact same: handling migration errors would either involve too much guesswork or introduce a host of new config options for no good reason (Revert everything? Don't revert anything? Attempt to call the failed migration's down method?). It is the caller's responsibility to handle errors appropriately.
